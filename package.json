@@ -6,7 +6,8 @@
 	"contributors": [
 		{
 		  "name": "Lv yuanjiao",
-		  "email": "lvyuanjiao@gmail.com"
+		  "email": "lvyuanjiao@gmail.com",
+		  "url": "http://lvyuanjiao.com"
 		}
 	],
 	"homepage": "https://github.com/lvyuanjiao/sql-mapper",

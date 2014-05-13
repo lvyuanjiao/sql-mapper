@@ -20,12 +20,12 @@ Create a mapper **post.smp** in folder **mappers**
 build and query
 ```js
 var path = require('path');
-var smp = require('sql-mapper');
+var mapper = require('sql-mapper');
 // build from mappers folder
-smp.build(path.join(__dirname, 'mappers'), function(err) {
+mapper.build(path.join(__dirname, 'mappers'), function(err) {
     if(err) throw err;
     // query
-    smp.mapper('post').select(123456, function(sql, values){
+    mapper.get('post').select(123456, function(sql, values){
         console.log(sql); //SELECT * FROM post WHERE id = ?
         console.log(values); //[ 123456 ]
     });
@@ -43,7 +43,7 @@ post.smp
 ```
 query
 ```js
-var mapper = require('sql-mapper').mapper;
+var mapper = require('sql-mapper').get;
 mapper('post').selectByAuthor('johnny', 'created_at', function(sql, values){
     console.log(sql); //SELECT * FROM post WHERE author = ? ORDER BY created_at
     console.log(values); //[ 'johnny' ]
@@ -69,7 +69,7 @@ post.smp
 ```
 query
 ```js
-var mapper = require('sql-mapper').mapper;
+var mapper = require('sql-mapper').get;
 
 mapper('post').select('johnny', function(sql, values){
     console.log(sql); //SELECT * FROM post WHERE author = ?
@@ -105,7 +105,7 @@ Use fragment feature to write reusable code
 ```
 As a result
 ```js
-var mapper = require('sql-mapper').mapper;
+var mapper = require('sql-mapper').get;
 
 mapper('post').select(function(sql, values){
     console.log(sql); //SELECT id , title , content , created_at FROM post
@@ -117,10 +117,10 @@ mapper('post').select(function(sql, values){
 Set dialect use `smp.build(dir, dialect, done);`
 ```js
 var path = require('path');
-var smp = require('sql-mapper');
-smp.build(path.join(__dirname, 'mappers'), 'postgres', function(err) {
+var mapper = require('sql-mapper');
+mapper.build(path.join(__dirname, 'mappers'), 'postgres', function(err) {
     if(err) throw err;
-    smp.mapper('post').select(123456, function(sql, values){
+    mapper.get('post').select(123456, function(sql, values){
         console.log(sql); //SELECT * FROM post WHERE id = $1
         console.log(values); //[ 123456 ]
     });

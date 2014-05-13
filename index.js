@@ -7,7 +7,7 @@ module.exports = (function() {
 		
 		'build': mapper.build,
 		
-		'mapper': mapper.get,
+		'get': mapper.get,
 		
 		'section': section
 		
