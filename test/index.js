@@ -26,8 +26,7 @@ describe('Test', function() {
 	});
 	
 	describe('#mapper', function(){
-		
-		
+				
 		it('post#selectAll()', function(done) {
 		
 			mapper.get('post').selectAll(function(sql, values) {

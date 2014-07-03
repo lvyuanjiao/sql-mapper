@@ -62,5 +62,5 @@
 {/#fields}
 
 {#fragment}
-    SELECT {>fields/} FROM post
+    SELECT {>fields} FROM post
 {/#fragment}

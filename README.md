@@ -100,7 +100,7 @@ Use fragment feature to write reusable code
 {/#fields}
 
 {#select}
-    SELECT {>fields/} FROM post
+    SELECT {>fields} FROM post
 {/#select}
 ```
 As a result
@@ -112,23 +112,11 @@ mapper('post').select(function(sql, values){
     console.log(values); //[ ]
 });
 
-```
-## Dialect (mysql, sqlite, postgres)
-Set dialect use `smp.build(dir, dialect, done);`
-```js
-var path = require('path');
-var mapper = require('sql-mapper');
-mapper.build(path.join(__dirname, 'mappers'), 'postgres', function(err) {
-    if(err) throw err;
-    mapper.get('post').select(123456, function(sql, values){
-        console.log(sql); //SELECT * FROM post WHERE id = $1
-        console.log(values); //[ 123456 ]
-    });
-});
-```
-
 ## Tests
 Run `npm install` & `npm test` in **sql-mapper** folder
+
+## Todo
+* Dialect
 
 ## License
 MIT
