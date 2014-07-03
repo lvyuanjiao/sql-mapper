@@ -111,6 +111,7 @@ mapper('post').select(function(sql, values){
     console.log(sql); //SELECT id , title , content , created_at FROM post
     console.log(values); //[ ]
 });
+```
 
 ## Tests
 Run `npm install` & `npm test` in **sql-mapper** folder
