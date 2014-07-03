@@ -2,11 +2,11 @@
 	"name": "sql-mapper",
 	"description": "A sql mapper in node.js like mybatis in java.",
 	"version": "0.0.3",
-	"author": "lvyuanjiao <lvyuanjiao@gmail.com>",
+	"author": "lvyuanjiao <lvyuanjiao@yeah.net>",
 	"contributors": [
 		{
 		  "name": "Lv yuanjiao",
-		  "email": "lvyuanjiao@gmail.com",
+		  "email": "lvyuanjiao@yeah.net",
 		  "url": "http://lvyuanjiao.com"
 		}
 	],
