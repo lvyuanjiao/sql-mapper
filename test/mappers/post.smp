@@ -13,6 +13,19 @@
 
 {/#selectById}
 
+{#select fields order}
+
+	SELECT 
+		{@trim suffixOverrides=","}
+			{@each value="#fields"}
+				$item,
+			{/@each}
+		{/@trim}
+	FROM post
+	ORDER BY $order DESC
+
+{/#select}
+
 {#update post}
 	
 	UPDATE post
@@ -31,18 +44,9 @@
 	
 {/#update}
 
-{#select fields order}
-
-	SELECT 
-		{@trim suffixOverrides=","}
-			{@each value="#fields"}
-				$item,
-			{/@each}
-		{/@trim}
-	FROM post
-	ORDER BY $order DESC
-
-{/#select}
+{#deleteById id}
+	DELETE FROM post WHERE id = #id
+{/#deleteById}
 
 {#loop test}
 
@@ -57,10 +61,18 @@
 
 {/#loop}
 
-{#fields}
-    id , title , content , created_at
+{#fields alias}
+    id , title , content , created_at AS $alias
 {/#fields}
 
-{#fragment}
-    SELECT {>fields} FROM post
+{#fragment alias}
+    SELECT {>fields alias} FROM post
 {/#fragment}
+
+{#uppercase}
+    SELECT 
+    {@case type="upper"}
+		id , title , CONTENT , CREATED_AT
+    {/@case}
+    FROM post
+{/#uppercase}

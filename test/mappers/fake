@@ -1,3 +1,0 @@
-{#selectAll}
-	SELECT * FROM fake
-{/#selectAll}

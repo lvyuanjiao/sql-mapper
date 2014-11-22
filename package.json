@@ -1,7 +1,7 @@
 {
 	"name": "sql-mapper",
 	"description": "A sql mapper in node.js like mybatis in java.",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"author": "lvyuanjiao <lvyuanjiao@yeah.net>",
 	"contributors": [
 		{
@@ -15,24 +15,25 @@
 		"type": "git",
 		"url": "https://github.com/lvyuanjiao/sql-mapper.git"
 	},
-	"keywords": [		
+	"keywords": [
 		"sql",
 		"mapper",
 		"template",
 		"database"
 	],
+	"main": "lib/mapper.js",
 	"engines": {
 		"node": "*"
 	},
 	"scripts": {
 		"test": "mocha"
 	},
-	"dependencies": {
-	    "async": "*"
+	"dependencies": {	    
 	},
 	"devDependencies": {
 		"mocha": "*",
 		"should": "*"
 	},
-	"readmeFilename": "README.md"
+	"readmeFilename": "README.md",
+	"license": "MIT"
 }

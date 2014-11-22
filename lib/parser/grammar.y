@@ -1,5 +1,3 @@
-/* description: Parses end executes mathematical expressions. */
-
 /* lexical grammar */
 %lex
 
@@ -76,7 +74,7 @@ queries
 			$$ = qs;
 		}
 	;
-  
+
 query
 	: '{#' QNAME '}' nodes '{/#' QNAME '}'
 		{ $$ = yy.query($2, [], $4); }
@@ -104,11 +102,11 @@ node
 	| fragment
 	    { $$ = $1; }
 	| INL
-		{ $$ = yy.inline($1) }
+		{ $$ = yy.inline($1); }
 	| REF
 		{ $$ = yy.reference($1); }
 	| TEXT
-		{ $$ = yy.text($1) }
+		{ $$ = yy.text($1); }
 	;  
 
 fragment
