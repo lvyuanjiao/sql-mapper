@@ -1,8 +1,8 @@
-{#selectAll}
+{#selectAll |p}
 	SELECT * FROM post
 {/#selectAll}
 
-{#selectById id}
+{#selectById id |cache}
 
 	SELECT * FROM post 
 	{@where}

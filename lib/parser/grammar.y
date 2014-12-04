@@ -17,6 +17,7 @@ path		[a-zA-Z][a-zA-Z0-9_.]*
 <q>[ ]*"}"												{ this.popState(); return '}'; }
 <q>{id}													{ return 'QNAME'; }
 <q>[ ]*{id}												{ yytext = yytext.replace(/\s+/g, ''); return 'QARGS'; }
+<q>[ ]*"|"[ ]*{id}  									{ yytext = yytext.replace(/\s+/g, '').substr(1); return 'FILTER' }
 
 "{>"													{ this.begin("f"); return '{>'; }
 <f>[ ]*["/"]?"}"										{ this.popState(); return '}'; }
@@ -77,9 +78,20 @@ queries
 
 query
 	: '{#' QNAME '}' nodes '{/#' QNAME '}'
-		{ $$ = yy.query($2, [], $4); }
+		{ $$ = yy.query($2, [], [], $4); }
 	| '{#' QNAME args '}' nodes '{/#' QNAME '}'
-		{ $$ = yy.query($2, $3, $5); }
+		{ $$ = yy.query($2, $3, [], $5); }
+	| '{#' QNAME filters '}' nodes '{/#' QNAME '}'
+		{ $$ = yy.query($2, [], $3, $5); }
+	| '{#' QNAME args filters '}' nodes '{/#' QNAME '}'
+		{ $$ = yy.query($2, $3, $4, $6); }
+	;
+
+filters
+	: FILTER
+		{ $$ = [$1]; }
+	| filters FILTER
+		{ $$ = [$1, $2]; }
 	;
 
 args
