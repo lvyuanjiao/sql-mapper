@@ -18,9 +18,7 @@ function beauty(sql) {
 describe('SQL', function() {
 	
 	before(function(done) {
-		mapper('test').build({
-			mappers: path.join(__dirname, 'mappers')
-		}, function(err) {
+		mapper('test').build(path.join(__dirname, 'mappers'), function(err) {
 			done();
 		});
 	});
