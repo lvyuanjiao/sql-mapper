@@ -21,7 +21,7 @@ path		[a-zA-Z][a-zA-Z0-9_.]*
 
 "{>"													{ this.begin("f"); return '{>'; }
 <f>[ ]*["/"]?"}"										{ this.popState(); return '}'; }
-<f>{id}													{ return 'FNAME'; }
+<f>{path}												{ return 'FNAME'; }
 <f>[ ]*{id}												{ yytext = yytext.replace(/\s+/g, ''); return 'FARGS'; }
 
 "{@"													{ this.begin("s"); return '{@'; }
