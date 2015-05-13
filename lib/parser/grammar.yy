@@ -1,11 +1,11 @@
 /* lexical grammar */
 %lex
 
-/* query section */
 %x q s f
 
 id			[a-zA-Z][a-zA-Z0-9_]*
 path		[a-zA-Z][a-zA-Z0-9_.]*
+quotes		('"'(\\\"|[^\"])*'"')|("'"(\\\'|[^\'])*"'")
 
 %%
 
@@ -19,10 +19,12 @@ path		[a-zA-Z][a-zA-Z0-9_.]*
 <q>[ ]*{id}												{ yytext = yytext.replace(/\s+/g, ''); return 'QARGS'; }
 <q>[ ]*"|"[ ]*{id}  									{ yytext = yytext.replace(/\s+/g, '').substr(1); return 'FILTER' }
 
-"{>"													{ this.begin("f"); return '{>'; }
+"{<"													{ this.begin("f"); return '{<'; }
 <f>[ ]*["/"]?"}"										{ this.popState(); return '}'; }
 <f>{path}												{ return 'FNAME'; }
-<f>[ ]*{id}												{ yytext = yytext.replace(/\s+/g, ''); return 'FARGS'; }
+<f>[ ]+{path}											{ yytext = yytext.replace(/\s+/g, ''); return 'FARGS_VAR'; }
+<f>[ ]+\d+												{ yytext = parseInt(yytext.replace(/\s+/g, ''), 10); return 'FARGS_INL'; }
+<f>[ ]+{quotes}											{ yytext = yytext.trim(); yytext = yytext.substr(1, yytext.length-2).replace(/\\"/g,'"'); return 'FARGS_INL'; }
 
 "{@"													{ this.begin("s"); return '{@'; }
 "{/@"													{ this.begin("s"); return '{/@'; }
@@ -31,8 +33,7 @@ path		[a-zA-Z][a-zA-Z0-9_.]*
 <s>{id}													{ return 'SNAME'; }
 <s>[ ]+{id}												{ yytext = yytext.substr(1, yyleng-1); return 'PK'; }
 <s>"="													{ return 'EQ'; }
-<s>'"'(\\\"|[^\"])*'"'									{ yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'PV'; }
-<s>"'"(\\\'|[^\'])*"'"									{ yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'PV'; }
+<s>{quotes}												{ yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'PV'; }
 
 // escape
 [\\]["#"|"$"|\\]										{ yytext = yytext.substr(1, yyleng-1); return 'TEXT'; }
@@ -122,17 +123,24 @@ node
 	;  
 
 fragment
-	: '{>' FNAME '}'
+	: '{<' FNAME '}'
 		{ $$ = yy.fragment($2, []); }
-	| '{>' FNAME fargs '}'
+	| '{<' FNAME fargs '}'
 		{ $$ = yy.fragment($2, $3); }
 	;
 
 fargs
-	: FARGS
+	: farg
 		{ $$ = [$1]; }
-	| fargs FARGS
+	| fargs farg
 		{ $$ = [].concat($1, $2); }
+	;
+
+farg
+	: FARGS_VAR
+		{ $$ = yy.fargVar($1); }
+	| FARGS_INL
+		{ $$ = yy.fargInl($1); }		
 	;
 
 section
