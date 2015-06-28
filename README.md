@@ -1,6 +1,5 @@
 # sql-mapper
 [![Build Status](https://travis-ci.org/lvyuanjiao/sql-mapper.png)](https://travis-ci.org/lvyuanjiao/sql-mapper)
-[![Coverage Status](https://coveralls.io/repos/lvyuanjiao/sql-mapper/badge.svg)](https://coveralls.io/r/lvyuanjiao/sql-mapper)
 
 ## Install
 
