@@ -26,13 +26,15 @@
 		"node": "*"
 	},
 	"scripts": {
-		"test": "mocha"
+		"test": "mocha",
+		"test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/"
 	},
 	"dependencies": {
 	},
 	"devDependencies": {
 		"mocha": "*",
-		"should": "*"
+		"should": "*",
+   		"istanbul": "^0.3.2"
 	},
 	"readmeFilename": "README.md",
 	"license": "MIT"
