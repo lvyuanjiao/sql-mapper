@@ -1,7 +1,7 @@
 {
 	"name": "sql-mapper",
 	"description": "A sql mapper in node.js like mybatis in java.",
-	"version": "0.1.12",
+	"version": "0.2.0",
 	"author": "lvyuanjiao <lvyuanjiao@yeah.net>",
 	"contributors": [
 		{
@@ -21,7 +21,7 @@
 		"template",
 		"database"
 	],
-	"main": "lib/mapper.js",
+	"main": "index.js",
 	"engines": {
 		"node": "*"
 	},

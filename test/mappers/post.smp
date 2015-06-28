@@ -1,0 +1,99 @@
+
+{#select}
+	SELECT * FROM post
+{/select}
+
+
+{#insert post}
+	INSERT INTO post(title, tags, content, created, category, author)
+	VALUES(#post.title, #post.tags, #post.content, #post.created, #post.category, #post.author)
+{/insert}
+
+
+{#selectAll sort order}
+	SELECT * FROM post ORDER BY $sort $order
+{/selectAll}
+
+{#search author category}
+	SELECT * FROM post
+	WHERE 
+		{@if test="#author"}
+			author = #author
+		{/if}
+		{@if test="#category"}
+			AND category = #category
+		{/if}
+{/search}
+
+{#searchIfNotNull author category}
+	SELECT * FROM post
+	{@where} 
+		{@if test="#author"}
+			AND author = #author
+		{/if}
+		{@if test="#category"}
+			AND category = #category
+		{/if}
+	{/where} 
+{/searchIfNotNull}
+
+{#update post}
+	UPDATE post
+	{@set}
+		{@if test="#post.title"} title = #post.title,{/if}
+		{@if test="#post.tags"} tags = #post.tags,{/if}
+		{@if test="#post.content"} description = #post.content,{/if}
+		{@if test="#post.category"} category = #post.category,{/if}
+	{/set}
+	{@where}
+		id = #post.id
+	{/where}
+{/update}
+
+{#updateIfNotNull post}
+	UPDATE post
+	{@set}
+		{@each value="#post"}
+			{@if test="#item"}
+				$key = #item,
+			{/if}
+		{/each}
+	{/set}
+	WHERE id = #post.id
+{/updateIfNotNull}
+
+{#fields}
+    title, tags, content, created, category, author
+{/fields}
+
+{#limit offset rows}
+	LIMIT $offset:int, $rows:int
+{/limit}
+
+{#selectByOffset offset}
+    SELECT {<fields/} FROM post {<limit offset 10 /}
+{/selectByPage}
+
+
+{#uppercase}
+    SELECT 
+    {@case type="upper"}
+		id , title , CONTENT , CREATED_AT
+    {/case}
+    FROM post
+{/uppercase}
+
+
+
+{#loop test}
+
+	{@each value="#test"}
+		key = $key
+		i = $index
+		{@each value="#item" key="j"}
+			($key i = $index, k = #j, t=$item)
+		{/each}
+		i = $index,
+	{/each}
+
+{/loop}

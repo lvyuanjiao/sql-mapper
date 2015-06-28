@@ -1,7 +1,7 @@
 /* lexical grammar */
 %lex
 
-%x q s f
+%x q s f e
 
 id			[a-zA-Z][a-zA-Z0-9_]*
 path		[a-zA-Z][a-zA-Z0-9_.]*
@@ -12,8 +12,11 @@ quotes		('"'(\\\"|[^\"])*'"')|("'"(\\\'|[^\'])*"'")
 \s+														/* skip whitespace */
 "//".*													/* ignore comment */
 
+"{/"													{ this.begin("e"); return '{/' }
+<e>{id}													{ return 'ENAME'; }
+<e>[ ]*"}"												{ this.popState(); return '}'; }
+
 "{#"													{ this.begin("q"); return '{#'; }
-"{/#"													{ this.begin("q"); return '{/#'; }
 <q>[ ]*"}"												{ this.popState(); return '}'; }
 <q>{id}													{ return 'QNAME'; }
 <q>[ ]*{id}												{ yytext = yytext.replace(/\s+/g, ''); return 'QARGS'; }
@@ -23,11 +26,10 @@ quotes		('"'(\\\"|[^\"])*'"')|("'"(\\\'|[^\'])*"'")
 <f>[ ]*["/"]?"}"										{ this.popState(); return '}'; }
 <f>{path}												{ return 'FNAME'; }
 <f>[ ]+{path}											{ yytext = yytext.replace(/\s+/g, ''); return 'FARGS_VAR'; }
-<f>[ ]+\d+												{ yytext = parseInt(yytext.replace(/\s+/g, ''), 10); return 'FARGS_INL'; }
-<f>[ ]+{quotes}											{ yytext = yytext.trim(); yytext = yytext.substr(1, yytext.length-2).replace(/\\"/g,'"'); return 'FARGS_INL'; }
+<f>[ ]+\d+												{ yytext = parseInt(yytext.replace(/\s+/g, ''), 10); return 'FARGS_CONST'; }
+<f>[ ]+{quotes}											{ yytext = yytext.trim(); yytext = yytext.substr(1, yytext.length-2).replace(/\\"/g,'"'); return 'FARGS_CONST'; }
 
 "{@"													{ this.begin("s"); return '{@'; }
-"{/@"													{ this.begin("s"); return '{/@'; }
 <s>[ ]*"}"												{ this.popState(); return '}'; }
 <s>[ ]*"/}"												{ this.popState(); return '/}'; }
 <s>{id}													{ return 'SNAME'; }
@@ -38,8 +40,8 @@ quotes		('"'(\\\"|[^\"])*'"')|("'"(\\\'|[^\'])*"'")
 // escape
 [\\]["#"|"$"|\\]										{ yytext = yytext.substr(1, yyleng-1); return 'TEXT'; }
 
-"#"{path}												{ yytext = yytext.substr(1, yyleng-1); return 'REF'; }
-"$"{path}												{ yytext = yytext.substr(1, yyleng-1); return 'INL'; }
+"#"{path}(":"{id})?										{ yytext = yytext.replace(/\s+/g, ''); yytext = yytext.substr(1, yyleng-1); return 'REF'; }
+"$"{path}(":"{id})?										{ yytext = yytext.replace(/\s+/g, ''); yytext = yytext.substr(1, yyleng-1); return 'INL'; }
 [^{\\#$]+												{ yytext = yytext.replace(/\s+/g, ' '); return 'TEXT'; }
 
 <<EOF>>													{ return 'EOF' }
@@ -78,13 +80,13 @@ queries
 	;
 
 query
-	: '{#' QNAME '}' nodes '{/#' QNAME '}'
+	: '{#' QNAME '}' nodes '{/' ENAME '}'
 		{ $$ = yy.query($2, [], [], $4); }
-	| '{#' QNAME args '}' nodes '{/#' QNAME '}'
+	| '{#' QNAME args '}' nodes '{/' ENAME '}'
 		{ $$ = yy.query($2, $3, [], $5); }
-	| '{#' QNAME filters '}' nodes '{/#' QNAME '}'
+	| '{#' QNAME filters '}' nodes '{/' ENAME '}'
 		{ $$ = yy.query($2, [], $3, $5); }
-	| '{#' QNAME args filters '}' nodes '{/#' QNAME '}'
+	| '{#' QNAME args filters '}' nodes '{/' ENAME '}'
 		{ $$ = yy.query($2, $3, $4, $6); }
 	;
 
@@ -139,21 +141,21 @@ fargs
 farg
 	: FARGS_VAR
 		{ $$ = yy.fargVar($1); }
-	| FARGS_INL
-		{ $$ = yy.fargInl($1); }		
+	| FARGS_CONST
+		{ $$ = yy.fargConst($1); }		
 	;
 
 section
 	: self_close
 		{ $$ = $1; }
-	| '{@'fn'}' nodes '{/@'SNAME'}'
+	| '{@' fn '}' nodes '{/' ENAME '}'
 		{ $$ = yy.section($2.value, $2.params, $4); }
 	;
 
 self_close
 	: '{@'fn'/}'
 	    { $$ = yy.section($2.value, $2.params, []); }
-	| '{@'fn'}' '{/@'SNAME'}'
+	| '{@'fn'}' '{/' ENAME '}'
 		{ $$ = yy.section($2.value, $2.params, []); }
 	;
 
