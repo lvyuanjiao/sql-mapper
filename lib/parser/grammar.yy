@@ -38,7 +38,7 @@ quotes		('"'(\\\"|[^\"])*'"')|("'"(\\\'|[^\'])*"'")
 <s>{quotes}												{ yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'PV'; }
 
 // escape
-[\\]["#"|"$"|\\]										{ yytext = yytext.substr(1, yyleng-1); return 'TEXT'; }
+[\\]["{"|"}"|"#"|"$"|\\]								{ yytext = yytext.substr(1, yyleng-1); return 'TEXT'; }
 
 "#"{path}(":"{id})?										{ yytext = yytext.replace(/\s+/g, ''); yytext = yytext.substr(1, yyleng-1); return 'REF'; }
 "$"{path}(":"{id})?										{ yytext = yytext.replace(/\s+/g, ''); yytext = yytext.substr(1, yyleng-1); return 'INL'; }

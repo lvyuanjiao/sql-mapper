@@ -147,11 +147,11 @@ describe('Test Parser', function() {
 	describe('#Escape()', function() {
 
 		it('# $', function() {
-			var ast = parser.parse('{#node}this is a pound char : \\#, this is a dollar char : \\${/node}');
+			var ast = parser.parse('{#node}this is a left brace char : \\{, this is a pound char : \\#, this is a dollar char : \\${/node}');
 			ast.node.block.should.be.instanceof(Array).and.have.lengthOf(1);
 			ast.node.block[0].should.have.properties({
 				name:"text",
-				value:"this is a pound char : #, this is a dollar char : $"
+				value:"this is a left brace char : {, this is a pound char : #, this is a dollar char : $"
 			});
 		});
 
