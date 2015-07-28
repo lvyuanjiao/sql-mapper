@@ -1,8 +1,11 @@
 
+{#builtInArgs}
+	SELECT '$__namespace, $__filename, $__entry'
+{/builtInArgs}
+
 {#select}
 	SELECT * FROM post
 {/select}
-
 
 {#insert post}
 	INSERT INTO post(title, tags, content, created, category, author)
@@ -78,7 +81,7 @@
 {#uppercase}
     SELECT 
     {@case type="upper"}
-		id , title , CONTENT , CREATED_AT
+		id, title, CONTENT, CREATED_AT
     {/case}
     FROM post
 {/uppercase}
@@ -97,3 +100,4 @@
 	{/each}
 
 {/loop}
+

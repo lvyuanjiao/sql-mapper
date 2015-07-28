@@ -47,6 +47,14 @@ describe('SQL Mapper', function() {
         });
 
 
+        it('Query with built in args', function() {
+            mapper('test').sql('post.builtInArgs', [], function(sql, values) {
+                beauty(sql).should.be.equal('SELECT \'test, post, builtInArgs\'');
+                values.should.be.empty();
+            });
+        });
+
+
         it('Query with empty args', function() {
             mapper('test').sql('post.select', [], function(sql, values) {
                 beauty(sql).should.be.equal('SELECT * FROM post');
@@ -66,7 +74,7 @@ describe('SQL Mapper', function() {
 
         it('Query with references', function() {
             mapper('test').sql('post.insert', post, function(sql, values) {
-                beauty(sql).should.be.equal('INSERT INTO post(title, tags, content, created, category, author) VALUES( ? , ? , ? , ? , ? , ? )');
+                beauty(sql).should.be.equal('INSERT INTO post(title, tags, content, created, category, author) VALUES(?, ?, ?, ?, ?, ?)');
                 values.should.eql(['SQL-MAPPER', 'sql,mapper,template', 'You should try this lib.', 1435307533417, 'nodejs', 'johnny']);
             });
         });
@@ -92,14 +100,14 @@ describe('SQL Mapper', function() {
 
         it('@set', function() {
             mapper('test').sql('post.update', post, function(sql, values) {
-                beauty(sql).should.be.equal('UPDATE post SET title = ? , tags = ? , description = ? , category = ? WHERE id = ?');
+                beauty(sql).should.be.equal('UPDATE post SET title = ?, tags = ?, description = ?, category = ? WHERE id = ?');
                 values.should.eql(['SQL-MAPPER', 'sql,mapper,template', 'You should try this lib.', 'nodejs', 123456]);
             });
         });
 
         it('@each', function() {
             mapper('test').sql('post.updateIfNotNull', post, function(sql, values) {
-                beauty(sql).should.be.equal('UPDATE post SET id = ? , title = ? , tags = ? , content = ? , created = ? , category = ? , author = ? WHERE id = ?');
+                beauty(sql).should.be.equal('UPDATE post SET id = ?, title = ?, tags = ?, content = ?, created = ?, category = ?, author = ? WHERE id = ?');
                 values.should.eql([123456, 'SQL-MAPPER', 'sql,mapper,template', 'You should try this lib.', 1435307533417, 'nodejs', 'johnny', 123456]);
             });
         });
@@ -114,7 +122,7 @@ describe('SQL Mapper', function() {
                 'b': ['a', 'b', 'c', 'd', 'e', 'f'],
             };
             mapper('test').sql('post.loop', test, function(sql, values) {
-                beauty(sql).should.be.equal('key = a i = 0 ( a i = 0 , k = ? , t= b ) ( a i = 1 , k = ? , t= d ) ( a i = 2 , k = ? , t= f ) i = 0 , key = b i = 1 ( b i = 0 , k = ? , t= a ) ( b i = 1 , k = ? , t= b ) ( b i = 2 , k = ? , t= c ) ( b i = 3 , k = ? , t= d ) ( b i = 4 , k = ? , t= e ) ( b i = 5 , k = ? , t= f ) i = 1 ,');
+                beauty(sql).should.be.equal('key = a i = 0 (a i = 0, k = ?, t=b) (a i = 1, k = ?, t=d) (a i = 2, k = ?, t=f) i = 0, key = b i = 1 (b i = 0, k = ?, t=a) (b i = 1, k = ?, t=b) (b i = 2, k = ?, t=c) (b i = 3, k = ?, t=d) (b i = 4, k = ?, t=e) (b i = 5, k = ?, t=f) i = 1,');
                 values.should.eql(['a', 'c', 'e', '0', '1', '2', '3', '4', '5']);
             });
         });
@@ -143,7 +151,7 @@ describe('SQL Mapper', function() {
 
             mapper('test').sql('post.uppercase', function(sql, values) {
                 sql = beauty(sql);
-                sql.should.equal('SELECT ID , TITLE , CONTENT , CREATED_AT FROM post');
+                sql.should.equal('SELECT ID, TITLE, CONTENT, CREATED_AT FROM post');
                 values.should.eql([]);
             });
 
@@ -156,7 +164,7 @@ describe('SQL Mapper', function() {
 
         it('Query with fragment', function() {
             mapper('test').sql('post.selectByOffset', 12, function(sql, values) {
-                beauty(sql).should.be.equal('SELECT title, tags, content, created, category, author FROM post LIMIT 12 , 10');
+                beauty(sql).should.be.equal('SELECT title, tags, content, created, category, author FROM post LIMIT 12, 10');
                 values.should.be.empty();
             });
         });
@@ -168,7 +176,7 @@ describe('SQL Mapper', function() {
 
         it('to int', function() {
             mapper('test').sql('post.limit', ["12", "10"], function(sql, values) {
-                beauty(sql).should.be.equal('LIMIT 12 , 10');
+                beauty(sql).should.be.equal('LIMIT 12, 10');
                 values.should.be.empty();
             });
         });

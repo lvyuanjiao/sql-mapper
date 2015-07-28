@@ -3,33 +3,32 @@
 
 %x q s f e
 
-id			[a-zA-Z][a-zA-Z0-9_]*
-path		[a-zA-Z][a-zA-Z0-9_.]*
+id			[a-zA-Z_][a-zA-Z0-9_]*
+path		[a-zA-Z_][a-zA-Z0-9_.]*
 quotes		('"'(\\\"|[^\"])*'"')|("'"(\\\'|[^\'])*"'")
 
 %%
 
-\s+														/* skip whitespace */
 "//".*													/* ignore comment */
 
-"{/"													{ this.begin("e"); return '{/' }
+\s*"{/"													{ this.begin("e"); return '{/' }
 <e>{id}													{ return 'ENAME'; }
-<e>[ ]*"}"												{ this.popState(); return '}'; }
+<e>[ ]*"}"\s*											{ this.popState(); return '}'; }
 
-"{#"													{ this.begin("q"); return '{#'; }
+\s*"{#"													{ this.begin("q"); return '{#'; }
 <q>[ ]*"}"												{ this.popState(); return '}'; }
 <q>{id}													{ return 'QNAME'; }
 <q>[ ]*{id}												{ yytext = yytext.replace(/\s+/g, ''); return 'QARGS'; }
 <q>[ ]*"|"[ ]*{id}  									{ yytext = yytext.replace(/\s+/g, '').substr(1); return 'FILTER' }
 
-"{<"													{ this.begin("f"); return '{<'; }
+\s*"{<"													{ this.begin("f"); return '{<'; }
 <f>[ ]*["/"]?"}"										{ this.popState(); return '}'; }
 <f>{path}												{ return 'FNAME'; }
 <f>[ ]+{path}											{ yytext = yytext.replace(/\s+/g, ''); return 'FARGS_VAR'; }
 <f>[ ]+\d+												{ yytext = parseInt(yytext.replace(/\s+/g, ''), 10); return 'FARGS_CONST'; }
 <f>[ ]+{quotes}											{ yytext = yytext.trim(); yytext = yytext.substr(1, yytext.length-2).replace(/\\"/g,'"'); return 'FARGS_CONST'; }
 
-"{@"													{ this.begin("s"); return '{@'; }
+\s*"{@"													{ this.begin("s"); return '{@'; }
 <s>[ ]*"}"												{ this.popState(); return '}'; }
 <s>[ ]*"/}"												{ this.popState(); return '/}'; }
 <s>{id}													{ return 'SNAME'; }

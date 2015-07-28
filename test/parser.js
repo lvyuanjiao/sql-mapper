@@ -26,12 +26,16 @@ describe('Test Parser', function() {
 
         it('Reference nodes', function() {
 			var ast = parser.parse('{#node val obj}#val #obj.val{/node}');
-			ast.node.block.should.be.instanceof(Array).and.have.lengthOf(2);
+			ast.node.block.should.be.instanceof(Array).and.have.lengthOf(3);
 			ast.node.block[0].should.have.properties({
 				name: "reference",
 				value: ["val"]
 			});
 			ast.node.block[1].should.have.properties({
+				name: "text",
+				value: ' '
+			});
+			ast.node.block[2].should.have.properties({
 				name: "reference",
 				value: ["obj","val"]
 			});
@@ -49,12 +53,16 @@ describe('Test Parser', function() {
 
         it('Inline nodes', function() {
 			var ast = parser.parse('{#node val obj}$val $obj.val{/node}');
-			ast.node.block.should.be.instanceof(Array).and.have.lengthOf(2);
+			ast.node.block.should.be.instanceof(Array).and.have.lengthOf(3);
 			ast.node.block[0].should.have.properties({
 				name: "inline",
 				value: ["val"]
 			});
 			ast.node.block[1].should.have.properties({
+				name: "text",
+				value: ' '
+			});
+			ast.node.block[2].should.have.properties({
 				name: "inline",
 				value: ["obj","val"]
 			});
