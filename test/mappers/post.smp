@@ -37,7 +37,7 @@
 		{@if test="#category"}
 			AND category = #category
 		{/if}
-	{/where} 
+	{/where}
 {/searchIfNotNull}
 
 {#update post}
