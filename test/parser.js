@@ -89,23 +89,39 @@ describe('Test Parser', function() {
         });
 
         it('Fragment nodes with args', function() {
-			var ast = parser.parse('{#node}{<frag var 123 "const" /}{/node}');
+			var ast = parser.parse('{#node}{<frag var obj.var 123 -123 123.5 -123.5 "const" /}{/node}');
 			ast.node.block.should.be.instanceof(Array).and.have.lengthOf(1);
 			ast.node.block[0].should.have.properties({
 				name: "fragment",
 				value: ["frag"]
 			});
 
-			ast.node.block[0].args.should.be.instanceof(Array).and.have.lengthOf(3);
+			ast.node.block[0].args.should.be.instanceof(Array).and.have.lengthOf(7);
 			ast.node.block[0].args[0].should.have.properties({
 				name: "var",
 				value: "var"
 			});
 			ast.node.block[0].args[1].should.have.properties({
-				name: "const",
-				value: 123
+				name: "var",
+				value: "obj.var"
 			});
 			ast.node.block[0].args[2].should.have.properties({
+				name: "const",
+				value: Number(123)
+			});
+			ast.node.block[0].args[3].should.have.properties({
+				name: "const",
+				value: Number(-123)
+			});
+			ast.node.block[0].args[4].should.have.properties({
+				name: "const",
+				value: Number(123.5)
+			});
+			ast.node.block[0].args[5].should.have.properties({
+				name: "const",
+				value: Number(-123.5)
+			});
+			ast.node.block[0].args[6].should.have.properties({
 				name: "const",
 				value: "const"
 			});

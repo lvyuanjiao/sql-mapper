@@ -6,6 +6,7 @@
 id			[a-zA-Z_][a-zA-Z0-9_]*
 path		[a-zA-Z_][a-zA-Z0-9_.]*
 quotes		('"'(\\\"|[^\"])*'"')|("'"(\\\'|[^\'])*"'")
+number		"-"?\d+\.?\d*
 
 %%
 
@@ -25,7 +26,7 @@ quotes		('"'(\\\"|[^\"])*'"')|("'"(\\\'|[^\'])*"'")
 <f>[ ]*["/"]?"}"										{ this.popState(); return '}'; }
 <f>{path}												{ return 'FNAME'; }
 <f>[ ]+{path}											{ yytext = yytext.replace(/\s+/g, ''); return 'FARGS_VAR'; }
-<f>[ ]+\d+												{ yytext = parseInt(yytext.replace(/\s+/g, ''), 10); return 'FARGS_CONST'; }
+<f>[ ]+{number}											{ yytext = Number(yytext.replace(/\s+/g, '')); return 'FARGS_CONST'; }
 <f>[ ]+{quotes}											{ yytext = yytext.trim(); yytext = yytext.substr(1, yytext.length-2).replace(/\\"/g,'"'); return 'FARGS_CONST'; }
 
 \s*"{@"													{ this.begin("s"); return '{@'; }
