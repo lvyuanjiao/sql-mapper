@@ -22,7 +22,7 @@ describe('SQL Mapper', function() {
 
     before(function(done) {
 
-        mapper.build({
+        mapper.create({
             namespace: 'test',
             dialect: 'mysql',
             mappers: path.join(__dirname, 'mappers')
@@ -199,7 +199,7 @@ describe('SQL Mapper no namespace', function() {
 
     before(function(done) {
 
-        mapper.build({
+        mapper.create({
             dialect: 'mysql',
             mappers: __dirname + '/mappers'
         }, function(err, mapper) {
