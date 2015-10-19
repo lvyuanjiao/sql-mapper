@@ -1,7 +1,21 @@
 /* lexical grammar */
 %lex
 
-%x q s f e
+%x q s f e i
+
+%{
+
+function trim(){
+	yytext = yytext.trim();
+}
+function strip(start, end) {
+	return yytext = yytext.substr(start, yytext.length - (end?end:0));
+}
+function deleteWhitespace() {
+	return yytext = yytext.replace(/\s+/g, '');
+}
+
+%}
 
 id			[a-zA-Z_][a-zA-Z0-9_]*
 path		[a-zA-Z_][a-zA-Z0-9_.]*
@@ -19,30 +33,35 @@ number		"-"?\d+\.?\d*
 \s*"{#"													{ this.begin("q"); return '{#'; }
 <q>[ ]*"}"												{ this.popState(); return '}'; }
 <q>{id}													{ return 'QNAME'; }
-<q>[ ]*{id}												{ yytext = yytext.replace(/\s+/g, ''); return 'QARGS'; }
-<q>[ ]*"|"[ ]*{id}  									{ yytext = yytext.replace(/\s+/g, '').substr(1); return 'FILTER' }
+<q>[ ]*{id}												{ trim(); return 'QARGS'; }
+<q>[ ]*"|"[ ]*{id}  									{　this.begin("i"); deleteWhitespace(); strip(1); return 'INTERCEPTOR' }
+<q,i>[ ]*"|"[ ]*{id}  									{ this.popState(); this.begin("i"); deleteWhitespace(); strip(1); return 'INTERCEPTOR' }
+<q,i>[ ]+{path}											{ trim(); return 'IARGS_VAR'; }
+<q,i>[ ]+{number}										{ trim(); yytext = Number(yytext); return 'IARGS_CONST'; }
+<q,i>[ ]+{quotes}										{ trim(); strip(1,2); yytext = yytext.replace(/\\"/g,'"'); return 'IARGS_CONST'; }
+<q,i>[ ]*"}"											{ this.popState(); this.popState(); return '}'; }
 
 \s*"{<"													{ this.begin("f"); return '{<'; }
 <f>[ ]*["/"]?"}"										{ this.popState(); return '}'; }
 <f>{path}												{ return 'FNAME'; }
-<f>[ ]+{path}											{ yytext = yytext.replace(/\s+/g, ''); return 'FARGS_VAR'; }
-<f>[ ]+{number}											{ yytext = Number(yytext.replace(/\s+/g, '')); return 'FARGS_CONST'; }
-<f>[ ]+{quotes}											{ yytext = yytext.trim(); yytext = yytext.substr(1, yytext.length-2).replace(/\\"/g,'"'); return 'FARGS_CONST'; }
+<f>[ ]+{path}											{ trim(); return 'FARGS_VAR'; }
+<f>[ ]+{number}											{ trim();　yytext = Number(yytext); return 'FARGS_CONST'; }
+<f>[ ]+{quotes}											{ trim(); strip(1, 2); yytext = yytext.replace(/\\"/g,'"'); return 'FARGS_CONST'; }
 
 \s*"{@"													{ this.begin("s"); return '{@'; }
 <s>[ ]*"}"												{ this.popState(); return '}'; }
 <s>[ ]*"/}"												{ this.popState(); return '/}'; }
 <s>{id}													{ return 'SNAME'; }
-<s>[ ]+{id}												{ yytext = yytext.substr(1, yyleng-1); return 'PK'; }
-<s>"="													{ return 'EQ'; }
-<s>{quotes}												{ yytext = yytext.substr(1, yyleng-2).replace(/\\"/g,'"'); return 'PV'; }
+<s>[ ]+{id}												{ trim();　return 'PK'; }
+<s>\s*"="\s*											{ return 'EQ'; }
+<s>{quotes}												{ strip(1,2); yytext = yytext.replace(/\\"/g,'"'); return 'PV'; }
 
 // escape
-[\\]["{"|"}"|"#"|"$"|\\]								{ yytext = yytext.substr(1, yyleng-1); return 'TEXT'; }
+[\\]["{"|"}"|"#"|"$"|\\]								{ strip(1,1); return 'TEXT'; }
 
-"#"{path}(":"{id})?										{ yytext = yytext.replace(/\s+/g, ''); yytext = yytext.substr(1, yyleng-1); return 'REF'; }
-"$"{path}(":"{id})?										{ yytext = yytext.replace(/\s+/g, ''); yytext = yytext.substr(1, yyleng-1); return 'INL'; }
-[^{\\#$]+												{ yytext = yytext.replace(/\s+/g, ' '); return 'TEXT'; }
+"#"{path}(":"{id})?										{ trim(); strip(1,1); return 'REF'; }
+"$"{path}(":"{id})?										{ trim(); strip(1,1); return 'INL'; }
+[^{\\#$]+												{ return 'TEXT'; }
 
 <<EOF>>													{ return 'EOF' }
 
@@ -84,17 +103,10 @@ query
 		{ $$ = yy.query($2, [], [], $4); }
 	| '{#' QNAME args '}' nodes '{/' ENAME '}'
 		{ $$ = yy.query($2, $3, [], $5); }
-	| '{#' QNAME filters '}' nodes '{/' ENAME '}'
+	| '{#' QNAME interceptors '}' nodes '{/' ENAME '}'
 		{ $$ = yy.query($2, [], $3, $5); }
-	| '{#' QNAME args filters '}' nodes '{/' ENAME '}'
+	| '{#' QNAME args interceptors '}' nodes '{/' ENAME '}'
 		{ $$ = yy.query($2, $3, $4, $6); }
-	;
-
-filters
-	: FILTER
-		{ $$ = [$1]; }
-	| filters FILTER
-		{ $$ = [$1, $2]; }
 	;
 
 args
@@ -102,6 +114,34 @@ args
 		{ $$ = [$1]; }
 	| args QARGS
 		{ $$ = [].concat($1, $2); }
+	;
+
+interceptors
+	: interceptor
+		{ $$ = [$1]; }
+	| interceptors interceptor
+		{ $$ = [].concat($1, $2); }
+	;
+
+interceptor
+	: INTERCEPTOR
+		{ $$ = yy.interceptor($1, []); }
+	| INTERCEPTOR iargs
+		{ $$ = yy.interceptor($1, $2); }
+	;
+
+iargs
+	: iarg
+		{ $$ = [$1]; }
+	| iargs iarg
+		{ $$ = [].concat($1, $2); }
+	;
+
+iarg
+	: IARGS_VAR
+		{ $$ = yy.argVar($1); }
+	| IARGS_CONST
+		{ $$ = yy.argConst($1); }
 	;
 
 nodes
@@ -140,9 +180,9 @@ fargs
 
 farg
 	: FARGS_VAR
-		{ $$ = yy.fargVar($1); }
+		{ $$ = yy.argVar($1); }
 	| FARGS_CONST
-		{ $$ = yy.fargConst($1); }		
+		{ $$ = yy.argConst($1); }
 	;
 
 section

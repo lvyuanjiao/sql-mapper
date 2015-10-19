@@ -46,6 +46,13 @@ describe('SQL Mapper', function() {
             });
         });
 
+        it('Query with interceptor', function() {
+            mapper('test').sql('post.selectWithPage', {offset:0,rows:10}, function(sql, values) {
+                beauty(sql).should.be.equal('SELECT * FROM post LIMIT 10 OFFSET 0');
+                values.should.be.empty();
+            });
+        });
+
 
         it('Query with built in args', function() {
             mapper('test').sql('post.builtInArgs', [], function(sql, values) {
@@ -123,7 +130,7 @@ describe('SQL Mapper', function() {
             };
             mapper('test').sql('post.loop', test, function(sql, values) {
                 beauty(sql).should.be.equal('key = a i = 0 (a i = 0, k = ?, t=b) (a i = 1, k = ?, t=d) (a i = 2, k = ?, t=f) i = 0, key = b i = 1 (b i = 0, k = ?, t=a) (b i = 1, k = ?, t=b) (b i = 2, k = ?, t=c) (b i = 3, k = ?, t=d) (b i = 4, k = ?, t=e) (b i = 5, k = ?, t=f) i = 1,');
-                values.should.eql(['a', 'c', 'e', '0', '1', '2', '3', '4', '5']);
+                values.should.eql(['a', 'c', 'e', 0, 1, 2, 3, 4, 5]);
             });
         });
 

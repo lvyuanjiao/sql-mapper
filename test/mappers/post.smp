@@ -7,6 +7,10 @@
 	SELECT * FROM post
 {/select}
 
+{#selectWithPage limit |page limit}
+	SELECT * FROM post
+{/selectWithPage}
+
 {#insert post}
 	INSERT INTO post(title, tags, content, created, category, author)
 	VALUES(#post.title, #post.tags, #post.content, #post.created, #post.category, #post.author)
