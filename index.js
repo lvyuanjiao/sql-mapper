@@ -1,40 +1,38 @@
 'use strict';
 
 var Mapper = require('./lib/mapper');
-
 var cache = {};
 
-function factory(namespace) {
-	if (!namespace) {
-        namespace = Object.keys(cache)[0];
-    }
-
-    if (!cache[namespace]) {
-        throw new Error('Mapper' + (namespace ? (' namespace : ' + namespace) : '') + ' is not exist');
-    }
-
-    return cache[namespace];
+function Factory(name) {
+  if (!name) {
+    name = Object.keys(cache)[0];
+  }
+  var mapper = cache[name];
+  if (!mapper) {
+    throw new Error('Mapper ' + name + ' is not exist');
+  }
+  return mapper;
 }
 
-factory.create = function(opts, done) {
-
-	opts.namespace = opts.namespace || 'DEFAULT_NAME_SPACE';
-    var mapper = new Mapper(opts.namespace);
-
-    if(!opts.mappers) {
-        return done(mapper);
+/*
+var opts = {
+  adaptor:'',
+  database: '',
+  driver:{},
+  pool:{}
+}
+*/
+Factory.create = function(mappers, opts, done) {
+  opts.database = opts.database || opts.driver.database;
+  var adaptor = require(opts.adaptor)(opts);
+  var mapper = new Mapper(opts.database, adaptor);
+  mapper.build(mappers, function(err) {
+    if (err) {
+      return done(err);
     }
-
-    mapper.build(opts.mappers, function(err) {
-        if (err) {
-            return done(err);
-        }
-
-        cache[opts.namespace] = mapper;
-        done(null, mapper);
-
-    });
-
+    cache[opts.database] = mapper;
+    done(null, mapper);
+  });
 };
 
-module.exports = factory;
+module.exports = Factory;

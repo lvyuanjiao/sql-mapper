@@ -1,39 +1,48 @@
 {
-	"name": "sql-mapper",
-	"description": "A sql mapper in node.js like mybatis in java.",
-	"version": "0.2.4",
-	"author": "lvyuanjiao <lvyuanjiao@yeah.net>",
-	"contributors": [
-		{
-		  "name": "Lv yuanjiao",
-		  "email": "lvyuanjiao@yeah.net",
-		  "url": "http://lvyuanjiao.com"
-		}
-	],
-	"homepage": "https://github.com/lvyuanjiao/sql-mapper",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/lvyuanjiao/sql-mapper.git"
-	},
-	"keywords": [
-		"sql",
-		"mapper",
-		"template",
-		"database"
-	],
-	"main": "index.js",
-	"engines": {
-		"node": "*"
-	},
-	"scripts": {
-		"test": "mocha"
-	},
-	"dependencies": {
-	},
-	"devDependencies": {
-		"mocha": "*",
-		"should": "*"
-	},
-	"readmeFilename": "README.md",
-	"license": "MIT"
+  "name": "sql-mapper",
+  "description": "SQL mapper",
+  "version": "1.0.0",
+  "author": "lvyuanjiao <lvyuanjiao@yeah.net>",
+  "contributors": [{
+    "name": "Lv yuanjiao",
+    "email": "lvyuanjiao@yeah.net",
+    "url": "http://lvyuanjiao.com"
+  }],
+  "homepage": "https://github.com/lvyuanjiao/sql-mapper",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lvyuanjiao/sql-mapper.git"
+  },
+	"bugs": {
+    "url": "https://github.com/lvyuanjiao/sql-mapper/issues"
+  },
+  "keywords": [
+    "sql",
+    "mapper",
+    "template",
+    "database",
+    "mybatis like"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": "*"
+  },
+  "scripts": {
+    "build": "grunt default",
+    "test": "grunt test"
+  },
+  "dependencies": {
+    "async": "1.5.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-mocha-cli": "^1.13.1",
+    "grunt-jison": "^1.3.2",
+    "mocha": "^1.18.0",
+    "should": "^7.1.1"
+  },
+  "readmeFilename": "README.md",
+  "license": "MIT"
 }
