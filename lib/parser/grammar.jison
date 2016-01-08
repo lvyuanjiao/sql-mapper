@@ -50,6 +50,8 @@ s                                         \s*
 <h>{s}","{s}                              { return ','; }
 <h>{s}{id}          										  { trim(); return 'QUERY_ARG'; }
 <h>{s}":"{path}                           { trim(); strip(1); return 'RESULT_MAP'; }
+<h>{s}"+"({id})?                          { trim(); return 'CACHE'; }
+<h>{s}"-"({id})?                          { trim(); return 'CACHE'; }
 <h>{s}"|"{s}{id}                          { this.begin('i'); deleteWhitespace(); strip(1); return 'PLUGIN'; }
 <h,i>{s}"|"{s}{id}  									    { this.popState(); this.begin("i"); deleteWhitespace(); strip(1); return 'PLUGIN' }
 <h,i>\s+{path}											      { trim(); return 'PLUGIN_VAR'; }
@@ -130,21 +132,40 @@ query
 
 query_header
   : QUERY
-    { $$ = yy.query($1, [], null, []); }
+    { $$ = yy.query($1, [], null, null, []); }
   | QUERY RESULT_MAP
-    { $$ = yy.query($1, [], $2, []); }
+    { $$ = yy.query($1, [], $2, null, []); }
   | QUERY '(' query_args ')'
-    { $$ = yy.query($1, $3, null, []); }
+    { $$ = yy.query($1, $3, null, null, []); }
   | QUERY '(' query_args ')' RESULT_MAP
-    { $$ = yy.query($1, $3, $5, []); }
+    { $$ = yy.query($1, $3, $5, null, []); }
+
   | QUERY plugins
-    { $$ = yy.query($1, [], null, $2); }
+    { $$ = yy.query($1, [], null, null, $2); }
   | QUERY RESULT_MAP plugins
-    { $$ = yy.query($1, [], $2, $3); }
+    { $$ = yy.query($1, [], $2, null, $3); }
   | QUERY '(' query_args ')' plugins
-    { $$ = yy.query($1, $3, null, $5); }
+    { $$ = yy.query($1, $3, null, null, $5); }
   | QUERY '(' query_args ')' RESULT_MAP plugins
-    { $$ = yy.query($1, $3, $5, $6); }
+    { $$ = yy.query($1, $3, $5, null, $6); }
+
+  | QUERY CACHE
+    { $$ = yy.query($1, [], null, yy.cache($2), []); }
+  | QUERY RESULT_MAP CACHE
+    { $$ = yy.query($1, [], $2, yy.cache($3), []); }
+  | QUERY '(' query_args ')' CACHE
+    { $$ = yy.query($1, $3, null, yy.cache($5), []); }
+  | QUERY '(' query_args ')' RESULT_MAP CACHE
+    { $$ = yy.query($1, $3, $5, yy.cache($6), []); }
+
+  | QUERY CACHE plugins
+    { $$ = yy.query($1, [], null, yy.cache($2), $3); }
+  | QUERY RESULT_MAP CACHE plugins
+    { $$ = yy.query($1, [], $2, yy.cache($3), $4); }
+  | QUERY '(' query_args ')' CACHE plugins
+    { $$ = yy.query($1, $3, null, yy.cache($5), $6); }
+  | QUERY '(' query_args ')' RESULT_MAP CACHE plugins
+    { $$ = yy.query($1, $3, $5, yy.cache($6), $7); }
   ;
 
 query_args

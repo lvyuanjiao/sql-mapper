@@ -24,22 +24,6 @@ var testPlugin = function() {
   };
 };
 
-var cachePlugin = function() {
-  return {
-    onSql: function(params, plugin, done) {
-      // always
-      done({
-        sql: 'SELECT * FROM table',
-        values: [1, 2]
-      });
-    },
-    onQuery: function(params, plugin, done) {
-      // always
-      done([1, 2, 3, 4, 5]);
-    }
-  };
-}
-
 describe('Plugin', function() {
 
   it('sql should pass', function(done) {
@@ -60,28 +44,6 @@ describe('Plugin', function() {
       mapper.query('test.query', [0], function(err, results) {
         should.not.exists(err);
         results.should.eql([0, 1, 1, 2, 2]);
-        done();
-      });
-    });
-  });
-
-  it('cache sql should pass', function(done) {
-    helper.contruct('test', '{#query |cache}test{/query}', function(err, mapper) {
-      mapper.plugin.set('cache', cachePlugin());
-      mapper.sql('test.query', [0], function(sql, values) {
-        helper.beauty(sql).should.be.equal('SELECT * FROM table');
-        values.should.eql([1, 2]);
-        done();
-      });
-    });
-  });
-
-  it('cache query should pass', function(done) {
-    helper.contruct('test', '{#query |cache}test{/query}', function(err, mapper) {
-      mapper.plugin.set('cache', cachePlugin());
-      mapper.query('test.query', [0], function(err, results) {
-        should.not.exists(err);
-        results.should.eql([1, 2, 3, 4, 5]);
         done();
       });
     });
