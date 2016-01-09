@@ -209,6 +209,12 @@ var testExpandData = [{
 
 
 var testMappingData = [{
+  'title': 'Empty',
+  'text': '{basic:{*id:id,title:title}}',
+  'data': [],
+  'sqlName': ['test', 'basic'],
+  'results': []
+}, {
   'title': 'Basic',
   'text': '{basic:{*id:id,title:title}}',
   'data': data,
