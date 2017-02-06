@@ -5,8 +5,7 @@
   "author": "lvyuanjiao <lvyuanjiao@yeah.net>",
   "contributors": [{
     "name": "Lv yuanjiao",
-    "email": "lvyuanjiao@yeah.net",
-    "url": "http://lvyuanjiao.com"
+    "email": "lvyuanjiao@yeah.net"
   }],
   "homepage": "https://github.com/lvyuanjiao/sql-mapper",
   "repository": {
@@ -28,20 +27,16 @@
     "node": "*"
   },
   "scripts": {
-    "build": "grunt default",
-    "test": "grunt test"
+    "build": "jison -o ./lib/parser/grammar.js ./lib/parser/grammar.jison",
+    "test": "mocha"
   },
   "dependencies": {
-    "async": "1.5.0"
+    "async": "~1.5.0"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-cli": "^0.1.13",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-mocha-cli": "^1.13.1",
-    "grunt-jison": "^1.3.2",
-    "mocha": "^1.18.0",
-    "should": "^7.1.1"
+    "jison": "~0.4.17",
+    "mocha": "~3.2.0",
+    "should": "~11.2.0"
   },
   "readmeFilename": "README.md",
   "license": "MIT"
