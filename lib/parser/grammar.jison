@@ -294,14 +294,14 @@ map
   : MAP_BEGIN MAP_END
     { $$ = {}; }
   | MAP_BEGIN pairs MAP_END
-    { $$ = yy.maps($2); }
+    { $$ = $2.association; }
   ;
 
 association
   :
     ASSOCIATION_BEGIN MAP_END
     {
-      $$ = yy.combi();
+      $$ = yy.schema();
       if($1){
         $$.extend = $1;
       }
@@ -318,7 +318,7 @@ association
 collection
   : COLLECTION_BEGIN COLLECTION_END
     {
-      $$ = yy.combi();
+      $$ = yy.schema();
       if($1){
         $$.extend = $1;
       }
@@ -334,9 +334,9 @@ collection
 
 pairs
   : pairs ',' pair
-    { $$ = yy.combi($1, $3); }
+    { $$ = yy.appendPair($3, $1); }
   | pair
-    { $$ = yy.combi($1); }
+    { $$ = yy.appendPair($1); }
   ;
 
 pair

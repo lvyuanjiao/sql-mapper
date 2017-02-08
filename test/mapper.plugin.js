@@ -27,11 +27,10 @@ var testPlugin = function() {
 describe('Plugin', function() {
 
   it('sql should pass', function(done) {
-    helper.contruct('test', '{#query(param) |test param}lower case text #param{/query}', function(err, mapper) {
+    helper.contruct('test', '{#query(param) |test param}select lower case text #param{/query}', function(err, mapper) {
       mapper.plugin.set('test', testPlugin());
       mapper.sql('test.query', [0], function(sql, values) {
-        //console.log(sql, values);
-        helper.beauty(sql).should.be.equal('NOT LOWER CASE TEXT ?');
+        helper.beauty(sql).should.be.equal('NOT SELECT LOWER CASE TEXT ?');
         values.should.eql([1]);
         done();
       });
@@ -39,13 +38,12 @@ describe('Plugin', function() {
   });
 
   it('query should pass', function(done) {
-    helper.contruct('test', '{#query(param) |test param |test param}lower case text #param{/query}', function(err, mapper) {
+    helper.contruct('test', '{#query(param) |test param}select{/query}', function(err, mapper) {
       mapper.plugin.set('test', testPlugin());
-      mapper.query('test.query', [0], function(err, results) {
-        should.not.exists(err);
-        results.should.eql([0, 1, 1, 2, 2]);
+      mapper.query('test.query', [0]).then(function(results) {
+        results.should.eql(['NOT SELECT', 1, 2]);
         done();
-      });
+      }).catch(done);;
     });
   });
 

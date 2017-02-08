@@ -215,6 +215,15 @@ var testMappingData = [{
   'sqlName': ['test', 'basic'],
   'results': []
 }, {
+  'title': 'No Mapper',
+  'text': '{basic:{}}',
+  'data': [{
+    "id": 1234,
+    "title": "Lorem ipsum dolor sit amet"
+  }],
+  'sqlName': ['test', 'basic'],
+  'results': [{}]
+}, {
   'title': 'Basic',
   'text': '{basic:{*id:id,title:title}}',
   'data': data,

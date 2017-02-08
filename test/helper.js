@@ -14,6 +14,8 @@ exports.contruct = function(db, string, done) {
     driver: {
       database: db
     }
+  }).then(function(m){
+    done(null, m);
   }, done);
 }
 
