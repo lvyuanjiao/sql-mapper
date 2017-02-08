@@ -65,10 +65,10 @@ var testData = [{
 }, {
   'title': '@each',
   'sqlName': 'test.updateIfNotNull',
-  'text': '{#updateIfNotNull(post)}UPDATE post {@set}{@each value="#post"}{@if test="#item"}$key = #item,{/if}{/each}{/set}WHERE id = #post.id{/updateIfNotNull}',
+  'text': '{#updateIfNotNull(post)}UPDATE post {@set}{@each value="#post" exclude="category, tags"}{@if test="#item"}$key = #item,{/if}{/each}{/set}WHERE id = #post.id{/updateIfNotNull}',
   'args': [post],
-  'sql': 'UPDATE post SET id = ?,title = ?,tags = ?,content = ?,created = ?,category = ?,author = ? WHERE id = ?',
-  'values': [post.id, post.title, post.tags, post.content, post.created, post.category, post.author, post.id]
+  'sql': 'UPDATE post SET id = ?,title = ?,content = ?,created = ?,author = ? WHERE id = ?',
+  'values': [post.id, post.title, post.content, post.created, post.author, post.id]
 }, {
   'title': 'Fragment',
   'sqlName': 'test.selectByOffset',
@@ -103,9 +103,7 @@ describe('#Mapper SQL', function() {
 
   describe('#Custom section', function() {
     it('@case', function(done) {
-
       helper.contruct('test', '{#case}SELECT {@case type="upper"}id, title, CONTENT, CREATED_AT{/case} FROM post{/case}', function(err, mapper){
-
         mapper.section.set('case', function(ctx, params, processBlock, callback) {
           var c = params['type'];
           var fn = (c === 'upper') ? 'toUpperCase' : 'toLowerCase';
@@ -116,17 +114,13 @@ describe('#Mapper SQL', function() {
             callback(sql[fn](), values);
           });
         });
-
         mapper.sql('test.case', [], function(sql, values) {
           //console.log(sql, values);
           helper.beauty(sql).should.equal('SELECT ID, TITLE, CONTENT, CREATED_AT FROM post');
           values.should.eql([]);
           done();
         });
-
       });
-
     });
   });
-
 });
