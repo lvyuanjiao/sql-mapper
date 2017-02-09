@@ -87,16 +87,14 @@ var testData = [{
 
 
 describe('#Mapper SQL', function() {
-
   testData.forEach(function(item) {
     it(item.title, function(done) {
       helper.contruct('test', item.text, function(err, mapper){
-        mapper.sql(item.sqlName, item.args, function(sql, values) {
-          //console.log(sql, values);
-          helper.beauty(sql).should.be.equal(item.sql);
-          values.should.eql(item.values);
+        mapper.sql(item.sqlName, item.args).then(function(sv) {
+          helper.beauty(sv.sql).should.be.equal(item.sql);
+          sv.values.should.eql(item.values);
           done();
-        });
+        }).catch(done);
       });
     });
   });
@@ -110,16 +108,16 @@ describe('#Mapper SQL', function() {
           if (c !== 'upper' && c != 'lower') {
             return processBlock(ctx, callback);
           }
-          processBlock(ctx, function(sql, values) {
-            callback(sql[fn](), values);
+          processBlock(ctx, function(sv) {
+            callback({ sql: sv.sql[fn](), values: sv.values });
           });
         });
-        mapper.sql('test.case', [], function(sql, values) {
+        mapper.sql('test.case', []).then(function(sv) {
           //console.log(sql, values);
-          helper.beauty(sql).should.equal('SELECT ID, TITLE, CONTENT, CREATED_AT FROM post');
-          values.should.eql([]);
+          helper.beauty(sv.sql).should.equal('SELECT ID, TITLE, CONTENT, CREATED_AT FROM post');
+          sv.values.should.eql([]);
           done();
-        });
+        }).catch(done);
       });
     });
   });

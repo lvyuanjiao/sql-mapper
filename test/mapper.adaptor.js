@@ -4,8 +4,7 @@ var path = require('path');
 var should = require('should');
 var helper = require('./helper');
 
-describe('Operation', function() {
-
+describe('Adaptor', function() {
   var sqlMapper;
   before(function(done) {
     helper.contruct('test', '{#select}select{/select}{#insert}insert{/insert}{#delete}delete{/delete}{#update}update{/update}', function(err, mapper) {

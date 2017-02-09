@@ -1,0 +1,37 @@
+{
+    post: {
+        id: id,
+        title: title,
+        content: content,
+        author: author,
+        created: created
+    }
+}
+
+{#insert(post)}
+	INSERT INTO post (title, content, author, created)
+	VALUES (#post.title, #post.content, #post.author, #post.created)
+{/insert}
+
+{#update(post)}
+	UPDATE post
+    {@set}
+        {@each value="#post" exclude="id,created"}
+            {@if test="#item"}$key = #item,{/if}
+        {/each}
+    {/set}
+	WHERE id = #post.id
+{/update}
+
+{#select(id):post}
+	SELECT * FROM post
+    {@where}
+        {@if test="#id"}
+            id = #id
+        {/if}
+    {/where}
+{/selectById}
+
+{#deleteById(postId)}
+	DELETE FROM post WHERE id = #postId
+{/deleteById}

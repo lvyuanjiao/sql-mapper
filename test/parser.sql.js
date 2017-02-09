@@ -12,7 +12,6 @@ var testData = [{
       "args": [],
       "plugins": [],
       "map": null,
-      "cache": null,
       "block": [{
         "type": "text",
         "value": "text"
@@ -28,7 +27,6 @@ var testData = [{
       "args": ['name', 'age'],
       "plugins": [],
       "map": null,
-      "cache": null,
       "block": [{
         "type": "text",
         "value": "text"
@@ -44,83 +42,6 @@ var testData = [{
       "args": [],
       "plugins": [],
       "map": 'map',
-      "cache": null,
-      "block": [{
-        "type": "text",
-        "value": "text"
-      }]
-    }
-  }
-}, {
-  title: 'Cache',
-  query: '{#query+}text{/query}',
-  ast: {
-    query: {
-      "name": "query",
-      "args": [],
-      "plugins": [],
-      "map": null,
-      "cache": {
-        "key": "",
-        "type": "cache"
-      },
-      "block": [{
-        "type": "text",
-        "value": "text"
-      }]
-    }
-  }
-}, {
-  title: 'Cache with key',
-  query: '{#query+cacheKey}text{/query}',
-  ast: {
-    query: {
-      "name": "query",
-      "args": [],
-      "plugins": [],
-      "map": null,
-      "cache": {
-        "key": "cacheKey",
-        "type": "cache"
-      },
-      "block": [{
-        "type": "text",
-        "value": "text"
-      }]
-    }
-  }
-}, {
-  title: 'Flush',
-  query: '{#query-}text{/query}',
-  ast: {
-    query: {
-      "name": "query",
-      "args": [],
-      "plugins": [],
-      "map": null,
-      "cache": {
-        "key": "",
-        "type": "flush"
-      },
-      "block": [{
-        "type": "text",
-        "value": "text"
-      }]
-    }
-  }
-}, {
-  title: 'Flush with key',
-  query: '{#query-cacheKey}text{/query}',
-  ast: {
-    query: {
-      "name": "query",
-      "args": [],
-      "plugins": [],
-      "map": null,
-      "cache": {
-        "key": "cacheKey",
-        "type": "flush"
-      },
       "block": [{
         "type": "text",
         "value": "text"
@@ -154,7 +75,6 @@ var testData = [{
         "args": []
       }],
       "map": null,
-      "cache": null,
       "block": [{
         "type": "text",
         "value": "text"
@@ -170,7 +90,6 @@ var testData = [{
       "args": ["val", "obj"],
       "plugins": [],
       "map": null,
-      "cache": null,
       "block": [{
         "type": "reference",
         "value": ["val"]
@@ -199,7 +118,6 @@ var testData = [{
       "args": ["val", "obj"],
       "plugins": [],
       "map": null,
-      "cache": null,
       "block": [{
         "type": "inline",
         "value": ["val"]
@@ -228,7 +146,6 @@ var testData = [{
       "args": [],
       "plugins": [],
       "map": null,
-      "cache": null,
       "block": [{
         "type": "fragment",
         "value": "frag",
@@ -266,7 +183,6 @@ var testData = [{
       "args": [],
       "plugins": [],
       "map": null,
-      "cache": null,
       "block": [{
         "type": "section",
         "value": "selfClose",
@@ -301,7 +217,6 @@ var testData = [{
       "args": [],
       "plugins": [],
       "map": null,
-      "cache": null,
       "block": [{
         "type": "text",
         "value": "1"
@@ -350,7 +265,6 @@ var testData = [{
       "args": [],
       "plugins": [],
       "map": null,
-      "cache": null,
       "block": [{
         type: 'text',
         value: 'this is a left brace char: {, this is a pound char: #, this is a dollar char: $, this is a slash char: \\'
@@ -359,7 +273,7 @@ var testData = [{
   }
 }, {
   title: 'Combi',
-  query: '{#query(val, obj):map+cacheKey |filter1 arg ext.arg "string" 123 |filter2}#val #obj.val #val:int $val $obj.val $val:int{<frag(var,obj.var,123,-123,123.5,-123.5,"const")/}{@selfClose/}{@selfClose p1/}{@section p1="value"}text node{/section} 1{@nest1}2{@nest2}3{@nest3}4{/nest3}5{/nest2}6{/nest1}7 this is a left brace char: \\{, this is a pound char: \\#, this is a dollar char: \\$, this is a slash char: \\\\{/query}',
+  query: '{#query(val, obj):map |filter1 arg ext.arg "string" 123 |filter2}#val #obj.val #val:int $val $obj.val $val:int{<frag(var,obj.var,123,-123,123.5,-123.5,"const")/}{@selfClose/}{@selfClose p1/}{@section p1="value"}text node{/section} 1{@nest1}2{@nest2}3{@nest3}4{/nest3}5{/nest2}6{/nest1}7 this is a left brace char: \\{, this is a pound char: \\#, this is a dollar char: \\$, this is a slash char: \\\\{/query}',
   ast: {
     "query": {
       "name": "query",
@@ -384,10 +298,6 @@ var testData = [{
         "args": []
       }],
       "map": "map",
-      "cache": {
-        "type": "cache",
-        "key": "cacheKey"
-      },
       "block": [{
         "type": "reference",
         "value": ["val"]

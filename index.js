@@ -26,15 +26,6 @@ var opts = {
       provider: 'plugin',
       opts: {}
     }
-  },
-  caches: {
-    namespace: {
-      provider: 'lru-cache',
-      opts: {
-        maxSize: 1024,
-        maxAge: 36000000
-      }
-    }
   }
 }
 */
@@ -43,20 +34,14 @@ Factory.create = function(mappers, opts) {
   var adaptor = require(opts.adaptor)(opts);
   var mapper = new Mapper(opts.database, adaptor);
   return new Promise(function(resolve, reject){
-    mapper.build(mappers, function(err) {
-      if (err) { return reject(err); }
-      
+    mapper.build(mappers).then(function() {
       for (var key in opts.plugins) { // config plugins
         var pluginOpts = opts.plugins[key];
         mapper.plugin.set(key, require(pluginOpts.provider)(pluginOpts.opts || {}));
       }
-      for (var key in opts.caches) { // config caches
-        var cacheOpts = opts.plugins[key];
-        mapper.cacheProvider.set(key, require(cacheOpts.provider)(cacheOpts.opts || {}));
-      }
       cache[opts.database] = mapper;
       resolve(mapper);
-    });
+    }).catch(reject);
   });
 };
 
